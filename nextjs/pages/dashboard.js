@@ -1,63 +1,35 @@
-import React from 'react';
-import RoomMetrics from '../components/RoomMetrics';
+import { useEffect, useState } from 'react';
+import api from '../utils/api';
+import DashboardMetrics from '../components/DashboardMetrics';
 import RecentReservations from '../components/RecentReservations';
-import RoomAvailability from '../components/RoomAvailability';
-import UpcomingCheckInsCheckOuts from '../components/UpcomingCheckInsCheckOuts';
-import RecentPayments from '../components/RecentPayments';
-import RoomManagementShortcuts from '../components/RoomManagementShortcuts';
-import SearchBar from '../components/SearchBar';
+import Searchbar from '../components/Searchbar';
 
-const Dashboard = ({ metrics, recentReservations, roomAvailability, upcomingEvents, payments }) => {
-  return (
-    <div>
-      {/* Search Bar */}
-      <SearchBar />
+export default function Dashboard() {
+    const [metrics, setMetrics] = useState({});
+    const [recentReservations, setRecentReservations] = useState([]);
 
-      {/* Room Metrics */}
-      <RoomMetrics metrics={metrics} />
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const metricsResponse = await api.get('/metrics'); // Replace with your FastAPI endpoint
+                const reservationsResponse = await api.get('/reservations?limit=5');
 
-      {/* Recent Reservations */}
-      <RecentReservations reservations={recentReservations} />
+                setMetrics(metricsResponse.data);
+                setRecentReservations(reservationsResponse.data);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        };
 
-      {/* Room Availability Summary */}
-      <RoomAvailability availability={roomAvailability} />
+        fetchDashboardData();
+    }, []);
 
-      {/* Upcoming Check-ins/Check-outs */}
-      <UpcomingCheckInsCheckOuts events={upcomingEvents} />
-
-      {/* Recent Payments */}
-      <RecentPayments payments={payments} />
-
-      {/* Room Management Shortcuts */}
-      <RoomManagementShortcuts />
-    </div>
-  );
-};
-
-// Fetch data on server-side
-export async function getServerSideProps() {
-  // Example API calls (replace with actual API endpoints)
-  const metricsRes = await fetch('https://your-api/metrics');
-  const recentReservationsRes = await fetch('https://your-api/recent-reservations');
-  const roomAvailabilityRes = await fetch('https://your-api/room-availability');
-  const upcomingEventsRes = await fetch('https://your-api/upcoming-events');
-  const paymentsRes = await fetch('https://your-api/recent-payments');
-
-  const metrics = await metricsRes.json();
-  const recentReservations = await recentReservationsRes.json();
-  const roomAvailability = await roomAvailabilityRes.json();
-  const upcomingEvents = await upcomingEventsRes.json();
-  const payments = await paymentsRes.json();
-
-  return {
-    props: {
-      metrics,
-      recentReservations,
-      roomAvailability,
-      upcomingEvents,
-      payments,
-    },
-  };
+    return (
+        <div>
+            <h1>Dashboard</h1>
+            <Searchbar />
+            <DashboardMetrics metrics={metrics} />
+            <RecentReservations reservations={recentReservations} />
+        </div>
+    );
 }
-
-export default Dashboard;

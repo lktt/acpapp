@@ -1,19 +1,26 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import Grid from "@mui/material/Grid2";
-import { Box, Typography, Button, TextField } from "@mui/material"; // Use by LoginForm
-import useBearStore from "@/store/useBearStore";
+import Head from 'next/head';
+import Link from 'next/link';
 
-function Home() {
-  return (
-    <>
-
-      <main>
-        <Box>This is index page</Box>
-      </main>
-    </>
-  );
+export default function Home() {
+    return (
+        <div>
+            <Head>
+                <title>Hotel Reservation System</title>
+            </Head>
+            <h1>Welcome to the Hotel Reservation System</h1>
+            <nav>
+                <ul>
+                    <li>
+                        <Link href="/dashboard">Dashboard</Link>
+                    </li>
+                    <li>
+                        <Link href="/rooms">Room Reservation</Link>
+                    </li>
+                    <li>
+                        <Link href="/reservations">Reservation Management</Link>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    );
 }
-
-export default Home;

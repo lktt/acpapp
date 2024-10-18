@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const SearchBar = () => {
-  const [query, setQuery] = useState('');
+const SearchBar = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = () => {
-    // Implement search functionality (e.g., redirect to search results page or filter current results)
-    console.log(`Searching for: ${query}`);
+    onSearch(searchTerm);
   };
 
   return (
-    <div className="search-bar">
+    <div>
       <input
         type="text"
-        placeholder="Search reservations, rooms, guests..."
-        value={query}
-        onChange={e => setQuery(e.target.value)}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Search..."
       />
       <button onClick={handleSearch}>Search</button>
     </div>
