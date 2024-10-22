@@ -3,7 +3,7 @@ import { fetchAPI } from '../utils/api';
 
 const Dashboard = () => {
   const [metrics, setMetrics] = useState({
-    totalRooms: 0,
+    totalRooms: 400,
     bookedRooms: 0,
     availableRooms: 0,
     checkInsToday: 0,

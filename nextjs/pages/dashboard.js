@@ -1,35 +1,57 @@
-import { useEffect, useState } from 'react';
-import api from '../utils/api';
+import { useState, useEffect } from 'react';
 import DashboardMetrics from '../components/DashboardMetrics';
 import RecentReservations from '../components/RecentReservations';
+import RoomAvailability from '../components/RoomAvailability';
+import UpcomingCheckInsCheckOuts from '../components/UpcomingCheckInsCheckOuts';
+import RecentPayments from '../components/RecentPayments';
+import RoomManagementShortcuts from '../components/RoomManagementShortcuts';
 import Searchbar from '../components/Searchbar';
 
-export default function Dashboard() {
-    const [metrics, setMetrics] = useState({});
-    const [recentReservations, setRecentReservations] = useState([]);
+const Dashboard = () => {
+  const [metrics, setMetrics] = useState(null);
+  const [recentReservations, setRecentReservations] = useState([]);
+  const [recentPayments, setRecentPayments] = useState([]);
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const metricsResponse = await api.get('/metrics'); // Replace with your FastAPI endpoint
-                const reservationsResponse = await api.get('/reservations?limit=5');
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      const res = await fetch('/api/dashboard');
+      const data = await res.json();
+      setMetrics(data);
+    };
 
-                setMetrics(metricsResponse.data);
-                setRecentReservations(reservationsResponse.data);
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            }
-        };
+    const fetchReservations = async () => {
+      const res = await fetch('/api/reservations/recent');
+      const data = await res.json();
+      setRecentReservations(data);
+    };
 
-        fetchDashboardData();
-    }, []);
+    const fetchPayments = async () => {
+      const res = await fetch('/api/payments/recent');
+      const data = await res.json();
+      setRecentPayments(data);
+    };
 
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            <Searchbar />
-            <DashboardMetrics metrics={metrics} />
-            <RecentReservations reservations={recentReservations} />
-        </div>
-    );
-}
+    fetchMetrics();
+    fetchReservations();
+    fetchPayments();
+  }, []);
+
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <h1>Dashboard</h1>
+      {metrics && (
+        <>
+          <DashboardMetrics metrics={metrics} />
+          <RoomAvailability availableRooms={metrics.availableRooms} />
+          <UpcomingCheckInsCheckOuts checkIns={metrics.checkInsToday} checkOuts={metrics.checkOutsToday} />
+        </>
+      )}
+      <Searchbar />
+      <RecentReservations reservations={recentReservations} />
+      <RecentPayments payments={recentPayments} />
+      <RoomManagementShortcuts />
+    </div>
+  );
+};
+
+export default Dashboard;

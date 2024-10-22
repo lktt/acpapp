@@ -1,23 +1,27 @@
 import { useState } from 'react';
+import styles from '../styles/Searchbar.module.css'; // Adjust path as necessary
 
-const SearchBar = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const Searchbar = () => {
+  const [query, setQuery] = useState("");
 
-  const handleSearch = () => {
-    onSearch(searchTerm);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Handle search logic here
+    console.log(`Searching for: ${query}`);
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search..."
+    <form onSubmit={handleSearch} className={styles.searchForm}>
+      <input 
+        type="text" 
+        placeholder="Search reservations or guests..." 
+        value={query} 
+        onChange={(e) => setQuery(e.target.value)} 
+        className={styles.searchInput} 
       />
-      <button onClick={handleSearch}>Search</button>
-    </div>
+      <button type="submit" className={styles.searchButton}>Search</button>
+    </form>
   );
 };
 
-export default SearchBar;
+export default Searchbar;
